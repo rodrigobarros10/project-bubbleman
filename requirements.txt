@@ -1,0 +1,28 @@
+# pip install -e git+https://github.com/houertecnologia/lib-phynfra.git@v2.0#egg=phynfra
+
+boto3==1.37.3
+botocore==1.37.3
+certifi==2025.1.31
+charset-normalizer==3.4.1
+delta-spark==3.3.0
+deltalake==0.25.2
+et_xmlfile==2.0.0
+idna==3.10
+importlib_metadata==8.6.1
+jmespath==1.0.1
+numpy==2.2.3
+openpyxl==3.1.5
+pandas==2.2.3
+-e git+https://github.com/houertecnologia/lib-phynfra.git@8a195fda7c9e7bb9956cb6fa1bf88d0ae9086891#egg=phynfra
+py4j==0.10.9.7
+pyarrow==18.1.0
+pyspark==3.5.5
+python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
+pytz==2025.1
+requests==2.32.3
+s3transfer==0.11.3
+six==1.17.0
+tzdata==2025.1
+urllib3==2.3.0
+zipp==3.21.0
