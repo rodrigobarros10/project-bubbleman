@@ -1,21 +1,16 @@
 import pandas as pd
+from dotenv import load_dotenv
+
 from src.phynfra.phynfra.aws.s3 import S3
 import os
 from io import StringIO, BytesIO
 import boto3
 
-# --- VARIÁVEIS GLOBAIS E CONFIGURAÇÃO ---
+load_dotenv()
 AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
-# Verificação de credenciais
-print("-" * 50)
-print(f"Chave de Acesso Carregada: {'Sim' if AWS_ACCESS_KEY else 'NÃO'}")
-print(f"Chave Secreta Carregada:  {'Sim' if AWS_SECRET_ACCESS_KEY else 'NÃO'}")
-print("-" * 50)
-if not AWS_ACCESS_KEY or not AWS_SECRET_ACCESS_KEY:
-	print("ERRO CRÍTICO: Credenciais da AWS não encontradas. Verifique suas variáveis de ambiente.")
-	exit()
+
 
 project = "project-bubbleman"
 moreapp_forms = {
@@ -25,12 +20,12 @@ moreapp_forms = {
 	"irss": "66e335a68410676c7282034b",
 	"ilum": "66e3368b8410676c72820358",
 	"ilup": "66e43cc58410676c72820a7a",
-	"amb":  "67fe71ace4ea1401e28ea185"
+	"amb":  "67fe71ace4ea1401e28ea185",
+	"irsrsd": "68af649704facf339a350ceb"
 }
 moreapp_files = ["images", "videos", "pdfs"]
 
 
-# --- DEFINIÇÃO DAS FUNÇÕES ---
 
 def scan_content_in_s3_bucket(s3_boto_client: boto3.client, content: str, moreapp_form: str) -> list:
 	"""Escaneia arquivos de mídia no bucket público."""
@@ -102,13 +97,10 @@ def generate_final_df(s3_phynfra_client: S3, s3_boto_client: boto3.client, morea
 
 	s3_bucket_gold = "dev-houer-us-east-1-gold-zone"
 
-	# --- CORREÇÃO APLICADA AQUI ---
-	# Adicionada a extensão .parquet ao nome do arquivo de destino.
 	s3_key_gold = f"{project}/moreapp/submissions/{moreapp_form}/{moreapp_form}.parquet"
 
 	print(f"Tentando escrever Parquet em: s3://{s3_bucket_gold}/{s3_key_gold}")
 	try:
-		# Passamos index=False para não salvar o índice do DataFrame no arquivo
 		s3_phynfra_client.write(bucket=s3_bucket_gold, payload=df.to_parquet(index=False), keyPrefix=s3_key_gold)
 		print("Escrita do Parquet na gold zone concluída com sucesso.")
 	except Exception as e:
@@ -120,7 +112,6 @@ def generate_df_with_links(s3_boto_client: boto3.client, content: str, moreapp_f
 	"""Gera um DataFrame com links para mídias."""
 	s3_bucket_gold = "dev-houer-us-east-1-gold-zone"
 
-	# Adicionada a extensão .parquet para ler o arquivo correto
 	s3_key_gold = f"{project}/moreapp/submissions/{moreapp_form}/{moreapp_form}.parquet"
 
 	try:
@@ -221,12 +212,9 @@ def main():
 			final_urls_df = pd.concat(list_of_link_dfs, ignore_index=True)
 			s3_bucket = "dev-houer-us-east-1-gold-zone"
 
-			# --- CORREÇÃO APLICADA AQUI ---
-			# Adicionada a extensão .parquet ao nome do arquivo de destino.
 			s3_id_key = f"{project}/moreapp/submissions/{content_type}/{content_type}.parquet"
 
 			print(f"Escrevendo links consolidados de '{content_type}' em s3://{s3_bucket}/{s3_id_key}")
-			# Passamos index=False para não salvar o índice do DataFrame no arquivo
 			s3_phynfra_client.write(bucket=s3_bucket, payload=final_urls_df.to_parquet(index=False),
 									keyPrefix=s3_id_key)
 		else:
@@ -235,6 +223,5 @@ def main():
 	print("\nProcesso ETL finalizado.")
 
 
-# --- Bloco de Execução ---
 if __name__ == "__main__":
 	main()
