@@ -23,7 +23,6 @@ moreapp_forms = {
 	"amb":  "67fe71ace4ea1401e28ea185",
 	"irsrsd": "68af649704facf339a350ceb"
 }
-moreapp_files = ["images", "videos", "pdfs"]
 
 
 
@@ -197,7 +196,7 @@ def main():
 	print("--- Etapa 1 Concluída ---\n")
 
 	print("--- Iniciando Etapa 2: Geração de Links de Mídia ---")
-	for content_type in moreapp_files:
+	for content_type in 1:
 		print(f"\nProcessando tipo de conteúdo: '{content_type}'")
 		list_of_link_dfs = []
 		for form_name in moreapp_forms.keys():

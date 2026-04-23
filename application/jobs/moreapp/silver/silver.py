@@ -67,7 +67,7 @@ def _transform_ilu_produtividade(df: pd.DataFrame) -> dict:
     print("  -> Aplicando transformação de 'ILU - Produtividade'.")
 
     colunas_relevantes = {
-        'id': 'id', 'meta_serialNumber': 'SN', 'data_buscar_id': 'id_buscar',
+        'id': 'id_coleta', 'meta_serialNumber': 'SN', 'data_buscar_id': 'id_buscar',
         'info_date': 'data_registro', 'data_regiao': 'codigo_regiao',
         'data_buscar_REGIAO': 'nome_regiao', 'data_buscar_SETOR': 'setor',
         'data_buscar_LOGRADOURO': 'logradouro', 'data_buscar_FREQUENCIA': 'frequencia_varricao',
@@ -77,7 +77,7 @@ def _transform_ilu_produtividade(df: pd.DataFrame) -> dict:
         'meta_location_latitude': 'latitude', 'meta_location_longitude': 'longitude',
         'meta_registrationDate': 'data_registro_dispositivo',
         '_processing_timestamp': 'data_processamento', 'data_foto': 'foto_1_url',
-        'data_foto2': 'foto_2_url', 'data_foto3': 'foto_3_url'
+        'data_foto2': 'foto_2_url', 'data_foto3': 'foto_3_url','mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -142,14 +142,14 @@ def _transform_irs_coleta_rsd_frota(df: pd.DataFrame) -> dict:
         'meta_location_longitude': 'longitude',
         'meta_device_name': 'dispositivo',
         'meta_registrationDate': 'data_registro',
-        'data_modelo_caminhao': 'modelo_caminhao'
+        'data_modelo_caminhao': 'modelo_caminhao',
+        'mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
     df_silver = df[list(colunas_existentes.keys())].rename(columns=colunas_existentes)
 
-    df_silver['data_coleta'] = pd.to_datetime(df_silver['data_coleta'], unit='ms', errors='coerce')
-    df_silver['data_registro'] = pd.to_datetime(df_silver['data_registro'], unit='ms', errors='coerce')
+  
 
     colunas_numericas = ['latitude', 'longitude', 'limite_carga_pbt', 'limite_carga_pbt_tolerancia']
     for col in colunas_numericas:
@@ -163,11 +163,18 @@ def _transform_irs_coleta_rsd_frota(df: pd.DataFrame) -> dict:
         df_silver['motorista'] = df_silver['motorista'].str.title().str.strip()
 
     if 'data_coleta' in df_silver.columns:
-        df_silver['data_coleta'] = pd.to_datetime(pd.to_numeric(df_silver['data_coleta'], errors='coerce'), unit='ms',
-                                                  errors='coerce')
+        df_silver['data_coleta'] = pd.to_datetime(
+            pd.to_numeric(df_silver['data_coleta'], errors='coerce'), 
+            unit='ms', 
+            errors='coerce'
+        ).dt.strftime('%Y-%m-%d %H:%M:%S')
+        
     if 'data_registro' in df_silver.columns:
-        df_silver['data_registro'] = pd.to_datetime(pd.to_numeric(df_silver['data_registro'], errors='coerce'),
-                                                    unit='ms', errors='coerce')
+        df_silver['data_registro'] = pd.to_datetime(
+            pd.to_numeric(df_silver['data_registro'], errors='coerce'),
+            unit='ms', 
+            errors='coerce'
+        ).dt.strftime('%Y-%m-%d %H:%M:%S')
 
     return {"irsf": df_silver}
 
@@ -203,7 +210,12 @@ def transform_irsrsd_coleta(df: pd.DataFrame) -> dict:
 		'data_foto4': 'foto_4_url',
 		'data_foto5': 'foto_5_url',
         'info_customerId': 'id_inspetor',
+<<<<<<< Updated upstream
 		'info_userId':'email_inspetor'
+=======
+		'info_userId':'email_inspetor',
+        'mailStatuses_0_pdfFileId':'id_pdf'
+>>>>>>> Stashed changes
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -247,7 +259,8 @@ def _transform_ambiental_irs_coleta_seletiva(df: pd.DataFrame) -> dict:
         'meta_location_latitude': 'latitude',
         'meta_location_longitude': 'longitude',
         'meta_device_name': 'dispositivo',
-        'meta_registrationDate': 'data_registro'
+        'meta_registrationDate': 'data_registro',
+        'mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -283,7 +296,8 @@ def _transform_irs_coleta_seletiva(df: pd.DataFrame) -> dict:
         'meta_location_latitude': 'latitude',
         'meta_location_longitude': 'longitude',
         'meta_device_name': 'dispositivo',
-        'meta_registrationDate': 'data_registro'
+        'meta_registrationDate': 'data_registro',
+        'mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -331,7 +345,8 @@ def _transform_irs_coleta_rsd_produtividade(df: pd.DataFrame) -> dict:
         'meta_registrationDate': 'data_registro',
         'data_foto': 'foto_1_url',
         'data_foto2': 'foto_2_url',
-        'data_foto3': 'foto_3_url'
+        'data_foto3': 'foto_3_url',
+        'mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -352,7 +367,7 @@ def _transform_ilu_varricao_manual(df: pd.DataFrame) -> dict:
     print("  -> Aplicando transformação de 'ILU - Varrição Manual'.")
 
     colunas_relevantes = {
-        'id': 'id_varricao',
+        'id': 'id_coleta',
         'meta_serialNumber': 'SN',
         'info_date': 'data_varricao',
         'data_localizao_coordinates_latitude': 'latitude',
@@ -378,7 +393,8 @@ def _transform_ilu_varricao_manual(df: pd.DataFrame) -> dict:
         'meta_location_latitude': 'dispositivo_latitude',
         'meta_location_longitude': 'dispositivo_longitude',
         'meta_device_name': 'dispositivo',
-        'meta_registrationDate': 'data_registro'
+        'meta_registrationDate': 'data_registro',
+        'mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -402,7 +418,7 @@ def _transform_irs_coleta_veiculo(df: pd.DataFrame) -> dict:
     print("  -> Aplicando transformação de 'IRS - Coleta RSD - Veículo'.")
 
     colunas_relevantes = {
-        'id': 'id',
+        'id': 'id_coleta',
         'data_buscar_veiculos_id': 'id_veiculo',
         'data_buscar_veiculos_PLACA':'placa',
         'meta_serialNumber': 'SN',
@@ -418,15 +434,14 @@ def _transform_irs_coleta_veiculo(df: pd.DataFrame) -> dict:
         'data_peso_entrada': 'peso_entrada_kg',
         'data_peso_saida': 'peso_saida_kg',
         'data_peso_total': 'peso_liquido_kg',
-        'data_coletor':'conformidade',
-        'data_rotaDeColeta':'rota de coleta',
         'data_foto':'foto_1_url',
         'data_foto2':'foto_2_url',
         'data_foto3':'foto_3_url',
         'data_observacao': 'observacao',
         'info_userId': 'operador_id',
         'meta_location_latitude': 'latitude',
-        'meta_location_longitude': 'longitude'
+        'meta_location_longitude': 'longitude',
+        'mailStatuses_0_pdfFileId':'id_pdf'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
