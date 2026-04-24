@@ -210,12 +210,7 @@ def transform_irsrsd_coleta(df: pd.DataFrame) -> dict:
 		'data_foto4': 'foto_4_url',
 		'data_foto5': 'foto_5_url',
         'info_customerId': 'id_inspetor',
-<<<<<<< Updated upstream
-		'info_userId':'email_inspetor'
-=======
-		'info_userId':'email_inspetor',
-        'mailStatuses_0_pdfFileId':'id_pdf'
->>>>>>> Stashed changes
+        'info_userId':'email_inspetor'
     }
 
     colunas_existentes = {k: v for k, v in colunas_relevantes.items() if k in df.columns}
@@ -434,6 +429,8 @@ def _transform_irs_coleta_veiculo(df: pd.DataFrame) -> dict:
         'data_peso_entrada': 'peso_entrada_kg',
         'data_peso_saida': 'peso_saida_kg',
         'data_peso_total': 'peso_liquido_kg',
+        'data_rotaDeColeta':'rota de coleta',
+        'data_conformidade_carga': 'conformidade_carga',
         'data_foto':'foto_1_url',
         'data_foto2':'foto_2_url',
         'data_foto3':'foto_3_url',
